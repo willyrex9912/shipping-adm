@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "category")
+@Table(name = "adm_category")
 @Getter
 @Setter
-public class Category {
+public class AdmCategory {
 
     @Id
     @SequenceGenerator(name = "categoryIdGenerator", sequenceName = "SEQ_CATEGORY", allocationSize = 1, initialValue = 5000)
@@ -36,7 +36,7 @@ public class Category {
         return this.internalId.equals(otherInternalId);
     }
 
-    public boolean is(Category other) {
+    public boolean is(AdmCategory other) {
         return this.is(other.internalId);
     }
 

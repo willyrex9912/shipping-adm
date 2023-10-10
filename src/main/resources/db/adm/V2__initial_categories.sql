@@ -1,4 +1,4 @@
-INSERT INTO public.category (category_id, parent_category_id, internal_id, description) VALUES
+INSERT INTO public.adm_category (category_id, parent_category_id, internal_id, description) VALUES
 (10500, NULL, 500, 'Status'),
 (10501, 10500, 501, 'Stat_Active'),
 (10502, 10500, 502, 'Stat_Inactive'),
