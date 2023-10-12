@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ShippingConfiguration {
 
+    @Autowired
+    ApplicationContext applicationContext;
+
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -23,9 +26,6 @@ public class ShippingConfiguration {
         return (web) -> web.ignoring()
                 .requestMatchers("/**");
     }
-
-    @Autowired
-    ApplicationContext applicationContext;
 
     @Bean
     public FilterRegistrationBean<TokenFilter> credentialFilter(){

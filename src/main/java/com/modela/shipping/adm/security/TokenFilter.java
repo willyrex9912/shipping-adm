@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
@@ -25,7 +24,7 @@ import java.util.List;
 public class TokenFilter extends OncePerRequestFilter {
 
     @Value("${adm.token-public-key}")
-    private String publicKeyName;
+    private String publicKeyName = "shippingPublicKey.pem";
 
     private final ApplicationContext applicationContext;
 
@@ -42,8 +41,8 @@ public class TokenFilter extends OncePerRequestFilter {
             Method method = handlerMethod.getMethod();
             Class<?> beanType = handlerMethod.getBeanType();
             if(
-                    !method.isAnnotationPresent(AuthenticationRequired.class) &&
-                            !beanType.isAnnotationPresent(AuthenticationRequired.class)
+                    !method.isAnnotationPresent(AuthRequired.class) &&
+                            !beanType.isAnnotationPresent(AuthRequired.class)
             ){
                 filterChain.doFilter(request, response);
                 return;
@@ -58,12 +57,9 @@ public class TokenFilter extends OncePerRequestFilter {
 
         if(header == null || !header.startsWith("Bearer ")){
             SecurityContextHolder.clearContext();
-            log.warn("Sin token");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        log.warn("decodificando token "+publicKeyName);
 
         String token = header.split(" ")[1].trim();
         try {
@@ -74,7 +70,6 @@ public class TokenFilter extends OncePerRequestFilter {
                     .parseClaimsJws(token)
                     .getBody();
 
-            log.warn("paso aquio");
             SecurityContextHolder.getContext().setAuthentication(
                 new ContextData(
                         claims.getSubject(),
@@ -87,7 +82,6 @@ public class TokenFilter extends OncePerRequestFilter {
         }catch (Exception e){
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.error(e.toString());
             return;
         }
 

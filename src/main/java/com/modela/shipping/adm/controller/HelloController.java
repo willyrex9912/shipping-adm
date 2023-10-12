@@ -1,6 +1,6 @@
 package com.modela.shipping.adm.controller;
 
-import com.modela.shipping.adm.security.AuthenticationRequired;
+import com.modela.shipping.adm.security.AuthRequired;
 import com.modela.shipping.adm.security.ContextData;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class HelloController {
         return "Hello, world!";
     }
 
-    @AuthenticationRequired
+    @AuthRequired
     @GetMapping("/user")
     public String sayHelloUser() {
         ContextData contextData = (ContextData) SecurityContextHolder.getContext().getAuthentication();
