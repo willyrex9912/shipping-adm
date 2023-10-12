@@ -1,8 +1,10 @@
 package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.dto.AdmPermissionDto;
+import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.repository.AdmPermissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +15,13 @@ public class AdmPermissionService {
 
     private final AdmPermissionRepository repository;
 
-    public List<AdmPermissionDto> findAll() {
-        var permissions = repository.findAll();
-        return permissions
+    public ShippingPage<List<AdmPermissionDto>, Long> findAll(Pageable pageable) {
+        var permissions = repository.findAll(pageable);
+        var permissionsDto = permissions
                 .stream()
                 .map(AdmPermissionDto::new)
                 .toList();
+
+        return ShippingPage.of(permissionsDto, permissions.getTotalElements());
     }
 }
