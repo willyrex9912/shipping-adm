@@ -16,4 +16,5 @@ public interface AdmTokenCredentialRepository extends JpaRepository<AdmTokenCred
     @Query("UPDATE AdmTokenCredential tc SET tc.expirationDate = :newDate WHERE tc.userId = :userId")
     void updateAdmTokenCredentialByUserId(@Param("userId") Long userId,@Param("newDate") LocalDateTime newDate);
 
+    Long countAdmTokenCredentialByUserIdAndExpirationDateAfterAndToken(Long userId, LocalDateTime date, String token);
 }

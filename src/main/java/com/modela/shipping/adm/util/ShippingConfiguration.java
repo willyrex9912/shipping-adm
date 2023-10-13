@@ -1,6 +1,7 @@
 package com.modela.shipping.adm.util;
 
 import com.modela.shipping.adm.security.TokenFilter;
+import com.modela.shipping.adm.service.AdmTokenCredentialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,9 @@ public class ShippingConfiguration {
     @Autowired
     ApplicationContext applicationContext;
 
+    @Autowired
+    AdmTokenCredentialService tokenCredentialService;
+
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -30,7 +34,7 @@ public class ShippingConfiguration {
     @Bean
     public FilterRegistrationBean<TokenFilter> credentialFilter(){
         FilterRegistrationBean<TokenFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(new TokenFilter(this.applicationContext));
+        bean.setFilter(new TokenFilter(this.applicationContext, this.tokenCredentialService));
         bean.addUrlPatterns("/*");
         return bean;
     }

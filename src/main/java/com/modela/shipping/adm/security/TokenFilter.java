@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.security;
 
+import com.modela.shipping.adm.service.AdmTokenCredentialService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -27,9 +28,11 @@ public class TokenFilter extends OncePerRequestFilter {
     private String publicKeyName = "shippingPublicKey.pem";
 
     private final ApplicationContext applicationContext;
+    private final AdmTokenCredentialService tokenCredentialService;
 
-    public TokenFilter(ApplicationContext applicationContext) {
+    public TokenFilter(ApplicationContext applicationContext, AdmTokenCredentialService tokenCredentialService) {
         this.applicationContext = applicationContext;
+        this.tokenCredentialService = tokenCredentialService;
     }
 
     @Override
@@ -61,6 +64,7 @@ public class TokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        ContextData contextData;
         String token = header.split(" ")[1].trim();
         try {
             Claims claims = Jwts
@@ -70,16 +74,22 @@ public class TokenFilter extends OncePerRequestFilter {
                     .parseClaimsJws(token)
                     .getBody();
 
-            SecurityContextHolder.getContext().setAuthentication(
-                new ContextData(
-                        claims.getSubject(),
-                        null,
-                        claims.get("user", Long.class),
-                        claims.get("org", Long.class),
-                        claims.get("roles", List.class)
-                )
+            contextData = new ContextData(
+                    claims.getSubject(),
+                    null,
+                    claims.get("user", Long.class),
+                    claims.get("org", Long.class),
+                    claims.get("roles", List.class)
             );
+
+            SecurityContextHolder.getContext().setAuthentication(contextData);
         }catch (Exception e){
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        
+        if(!tokenCredentialService.validToken(contextData.getUserId(), contextData.getRoles(), token)){
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
