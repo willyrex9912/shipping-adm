@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,5 +28,13 @@ public class AdmUserService {
         // hash password here and then save
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);
+    }
+
+    public Boolean checkPassword(String password, String encodedPassword){
+        return encoder.matches(password, encodedPassword);
+    }
+
+    public Optional<AdmUser> findByEmail(String email){
+        return this.repository.findByEmail(email);
     }
 }
