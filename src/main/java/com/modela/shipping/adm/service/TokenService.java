@@ -27,12 +27,12 @@ public class TokenService {
 
     public String generateToken(String username, Long org, Long user, List<String> roles) throws IOException {
         return Jwts.builder()
+                .setClaims(this.buildClaims(org, user, roles))
                 .setId("w"+UUID.randomUUID().getLeastSignificantBits())
                 .setSubject(username)
                 .setAudience("CUNOC")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (tokenValidTime * 60 * 60 * 1000)))
-                .setClaims(this.buildClaims(org, user, roles))
                 .signWith(KeyLoader.loadPrivateKey(privateKeyName))
                 .compact()
                 ;
