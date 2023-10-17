@@ -46,7 +46,7 @@ public class AdmTokenCredentialService {
         roles.add("3");
         return tokenService.generateToken(
                 user.getEmail(),
-                user.getOrganizationId(),
+                user.getOrganization().getOrganizationId(),
                 user.getUserId(),
                 roles
         );

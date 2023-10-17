@@ -2,6 +2,7 @@ package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.model.AdmUser;
 import com.modela.shipping.adm.repository.AdmUserRepository;
+import com.modela.shipping.adm.repository.AdmUserRoleRepository;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class AdmUserService {
 
     private final AdmUserRepository repository;
+    private final AdmUserRoleRepository userRoleRepository;
     private final PasswordEncoder encoder;
 
     public AdmUser create(AdmUser user) throws ShippingException {
@@ -28,6 +30,15 @@ public class AdmUserService {
         // hash password here and then save
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);
+    }
+
+    public void addRoles(AdmUser user) {
+        userRoleRepository.saveAll(user.getUserRoles());
+    }
+
+    public void createWithRoles(AdmUser user) throws ShippingException {
+        create(user);
+        userRoleRepository.saveAll(user.getUserRoles());
     }
 
     public Boolean checkPassword(String password, String encodedPassword){
