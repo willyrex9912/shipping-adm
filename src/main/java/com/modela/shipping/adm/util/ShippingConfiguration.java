@@ -2,7 +2,7 @@ package com.modela.shipping.adm.util;
 
 import com.modela.shipping.adm.security.TokenFilter;
 import com.modela.shipping.adm.service.AdmTokenCredentialService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,13 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@RequiredArgsConstructor
 public class ShippingConfiguration {
 
-    @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
-    AdmTokenCredentialService tokenCredentialService;
+    private final ApplicationContext applicationContext;
+    private final AdmTokenCredentialService tokenCredentialService;
 
     @Bean
     public PasswordEncoder encoder() {
