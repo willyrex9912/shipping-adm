@@ -18,7 +18,7 @@ public class HelloController {
     @GetMapping("/user")
     public String sayHelloUser() {
         ContextData contextData = (ContextData) SecurityContextHolder.getContext().getAuthentication();
-        return "Hello user " + (contextData == null ? "NULL" : contextData.getUserId());
+        return "Hello user " + (contextData == null ? "NULL" : contextData.getName());
     }
 
     @PostMapping
