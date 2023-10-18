@@ -16,13 +16,13 @@ public class AdmOrganizationService {
 
     private final AdmOrganizationRepository repository;
 
-    private ShippingPage<List<AdmOrganization>, Long> findAll(Pageable pageable){
+    public ShippingPage<List<AdmOrganization>, Long> findAll(Pageable pageable){
         var organizations = repository.findAll(pageable);
         return ShippingPage.of(organizations.toList(), organizations.getTotalElements());
     }
 
-    public void save(AdmOrganization organization) {
-        repository.save(organization);
+    public AdmOrganization save(AdmOrganization organization) {
+        return repository.save(organization);
     }
 
     public Optional<AdmOrganization> findById(Long id) {

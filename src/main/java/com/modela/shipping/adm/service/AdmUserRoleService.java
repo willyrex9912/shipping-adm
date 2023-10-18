@@ -18,10 +18,8 @@ public class AdmUserRoleService {
     }
 
     public void saveAll(List<AdmUserRole> userRoles) {
-        var filteredUserRoles = userRoles.stream()
-                .filter(ur -> !repository.existsByUserAndRole(ur.getUser(), ur.getRole()))
-                .toList();
-        repository.saveAll(filteredUserRoles);
+        // TODO: Validar si el userRole ya existe, actualizar solamente cuado trae Id
+        repository.saveAll(userRoles);
     }
 
     public void deleteAll(Iterable<AdmUserRole> userRoles) {

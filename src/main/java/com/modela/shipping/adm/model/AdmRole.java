@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,10 +13,15 @@ import java.util.List;
 public class AdmRole {
 
     @Id
-    @SequenceGenerator(name = "roleIdGenerator", sequenceName = "SEQ_ROLE", allocationSize = 1, initialValue = 5000)
+    @SequenceGenerator(name = "roleIdGenerator", sequenceName = "SEQ_ADM_ROLE", allocationSize = 1, initialValue = 5000)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roleIdGenerator")
     @Column(name = "role_id")
     private Long roleId;
+
+    @JsonBackReference("role-organization")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private AdmOrganization organization;
 
     @Column(name = "name")
     private String name;

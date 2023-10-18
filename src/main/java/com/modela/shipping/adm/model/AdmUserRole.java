@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,15 +18,17 @@ public class AdmUserRole {
     @Column(name = "user_role_id")
     private Long userRoleId;
 
+    @JsonBackReference("user-role")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private AdmUser user;
 
+    @JsonBackReference("role-user")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private AdmRole role;
 
     @Column(name = "entry_date")
-    private LocalDateTime entryDate;
+    private LocalDateTime entryDate = LocalDateTime.now();
 
 }

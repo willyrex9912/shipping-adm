@@ -27,9 +27,9 @@ public class AdmRoleService {
         return repository.findById(id);
     }
 
-    public void save(AdmRole role) {
+    public AdmRole save(AdmRole role) {
         rolePermissionService.saveAll(role.getRolePermissions());
-        repository.save(role);
+        return repository.save(role);
     }
 
     public void delete(AdmRole role) {

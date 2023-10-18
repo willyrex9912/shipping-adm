@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,15 +12,17 @@ import lombok.Setter;
 public class AdmRolePermission {
 
     @Id
-    @SequenceGenerator(name = "rolePermissionIdGenerator", sequenceName = "SEQ_ROLE_PERMISSION", allocationSize = 1, initialValue = 5000)
+    @SequenceGenerator(name = "rolePermissionIdGenerator", sequenceName = "SEQ_ADM_ROLE_PERMISSION", allocationSize = 1, initialValue = 5000)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rolePermissionIdGenerator")
     @Column(name = "role_permission_id")
     private Long rolePermissionId;
 
+    @JsonBackReference("role-permission")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private AdmRole role;
 
+    @JsonBackReference("permission-role")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "permission_id")
     private AdmPermission permission;

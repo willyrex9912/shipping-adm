@@ -18,10 +18,8 @@ public class AdmRolePermissionService {
     }
 
     public void saveAll(List<AdmRolePermission> rolePermissions) {
-        var filteredRolePermissions = rolePermissions.stream()
-                .filter(rp -> !repository.existsByRoleAndPermission(rp.getRole(), rp.getPermission()))
-                .toList();
-        repository.saveAll(filteredRolePermissions);
+        // TODO: Validar si el rolePermission ya existe, actualizar solamente cuado trae Id
+        repository.saveAll(rolePermissions);
     }
 
     public void deleteAll(Iterable<AdmRolePermission> rolePermissions) {

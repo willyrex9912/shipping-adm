@@ -23,9 +23,9 @@ public class LoginService {
     private final AdmTokenCredentialService tokenCredentialService;
 
     public String doLogin(UserCredentialDto credentialDto, String userAgent) throws ShippingException, IOException {
-        Optional<AdmUser> user = this.userService.findByEmail(credentialDto.getUsername());
+        Optional<AdmUser> user = this.userService.findByEmail(credentialDto.username());
         if (user.isEmpty()) throw new ShippingException("Wrong credentials");
-        boolean matchPassword = this.userService.checkPassword(credentialDto.getPassword(), user.get().getPassword());
+        boolean matchPassword = this.userService.checkPassword(credentialDto.password(), user.get().getPassword());
         if(matchPassword){
             return this.tokenCredentialService.doLogin(user.get(), userAgent);
         }

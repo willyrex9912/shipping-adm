@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,8 @@ import java.util.List;
 @Table(name = "adm_user")
 @Getter
 @Setter
-public class AdmUser {
+public class
+AdmUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userIdGenerator")
@@ -18,7 +20,8 @@ public class AdmUser {
     @Column(name = "user_id")
     private Long userId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JsonBackReference("user-organization")
+    @ManyToOne
     @JoinColumn(name = "organization_id")
     private AdmOrganization organization;
 

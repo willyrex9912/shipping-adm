@@ -1,14 +1,19 @@
 package com.modela.shipping.adm.service;
 
+import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmUser;
 import com.modela.shipping.adm.repository.AdmUserRepository;
 import com.modela.shipping.adm.repository.AdmUserRoleRepository;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -17,28 +22,28 @@ import java.util.Optional;
 public class AdmUserService {
 
     private final AdmUserRepository repository;
-    private final AdmUserRoleRepository userRoleRepository;
+    private final AdmUserRoleService userRoleService;
     private final PasswordEncoder encoder;
 
-    public AdmUser create(AdmUser user) throws ShippingException {
+    public ShippingPage<List<AdmUser>, Long> findAll(Pageable pageable){
+        var page = repository.findAll(pageable);
+        return ShippingPage.of(page.toList(), page.getTotalElements());
+    }
+
+    public Optional<AdmUser> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public AdmUser createWithRoles(AdmUser user) throws ShippingException {
         var userOpt = repository.findByEmail(user.getEmail());
-        if (userOpt.isPresent()) {
+        if (Objects.isNull(user.getUserId()) && userOpt.isPresent()) {
             log.warn("user with email: {} already exists", user.getEmail());
-            throw new ShippingException("email_already_exists");
+            throw new ShippingException("User email already exists").withStatus(HttpStatus.CONFLICT);
         }
 
-        // hash password here and then save
         user.setPassword(encoder.encode(user.getPassword()));
+        userRoleService.saveAll(user.getUserRoles());
         return repository.save(user);
-    }
-
-    public void addRoles(AdmUser user) {
-        userRoleRepository.saveAll(user.getUserRoles());
-    }
-
-    public void createWithRoles(AdmUser user) throws ShippingException {
-        create(user);
-        userRoleRepository.saveAll(user.getUserRoles());
     }
 
     public Boolean checkPassword(String password, String encodedPassword){

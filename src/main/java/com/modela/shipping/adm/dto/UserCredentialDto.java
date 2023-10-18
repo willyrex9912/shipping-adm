@@ -6,10 +6,5 @@ import lombok.Data;
  * @author willyrex
  */
 
-@Data
-public class UserCredentialDto {
 
-    private String username;
-    private String password;
-
-}
+public record UserCredentialDto(String username, String password) {}
