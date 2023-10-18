@@ -3,9 +3,7 @@ package com.modela.shipping.adm.controller;
 import com.modela.shipping.adm.security.AuthRequired;
 import com.modela.shipping.adm.security.ContextData;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("hello")
@@ -22,4 +20,11 @@ public class HelloController {
         ContextData contextData = (ContextData) SecurityContextHolder.getContext().getAuthentication();
         return "Hello user " + (contextData == null ? "NULL" : contextData.getUserId());
     }
+
+    @PostMapping
+    public Credentials sayHelloPost(@RequestBody Credentials credentials) {
+        return new Credentials("Hello", "World!!");
+    }
+
+    public record Credentials(String username, String password) {}
 }

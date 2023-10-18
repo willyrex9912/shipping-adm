@@ -21,7 +21,7 @@ public class AdmPermission {
     @Column(name = "permission_id")
     private Long permissionId;
 
-    @JsonBackReference
+    @JsonBackReference("permission-parent")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_permission_id")
     private AdmPermission parentPermission;

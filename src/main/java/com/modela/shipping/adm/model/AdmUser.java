@@ -1,20 +1,18 @@
 package com.modela.shipping.adm.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "adm_user")
 @Getter
 @Setter
-public class AdmUser {
+public class
+AdmUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userIdGenerator")
@@ -22,8 +20,10 @@ public class AdmUser {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @JsonBackReference("user-organization")
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    private AdmOrganization organization;
 
     @Column(name = "full_name")
     private String fullName;
@@ -39,4 +39,7 @@ public class AdmUser {
 
     @Column(name = "unique_identification_code")
     private String cui;
+
+    @OneToMany(mappedBy = "user")
+    private List<AdmUserRole> userRoles;
 }
