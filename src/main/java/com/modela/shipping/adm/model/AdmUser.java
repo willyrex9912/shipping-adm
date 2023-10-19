@@ -25,6 +25,9 @@ AdmUser {
     @JoinColumn(name = "organization_id")
     private AdmOrganization organization;
 
+    @Column(name = "sub_organization_id")
+    private Long subOrganizationId;
+
     @Column(name = "full_name")
     private String fullName;
 
