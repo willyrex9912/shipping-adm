@@ -18,6 +18,9 @@ public class AdmOrganization {
     @Column(name = "organization_id")
     private Long organizationId;
 
+    @Column(name = "parent_organization_id")
+    private Long parentOrganizationId;
+
     @Column(name = "org_name")
     private String orgName;
 
@@ -26,5 +29,4 @@ public class AdmOrganization {
 
     @OneToMany(mappedBy = "organization")
     private List<AdmUser> users;
-
 }
