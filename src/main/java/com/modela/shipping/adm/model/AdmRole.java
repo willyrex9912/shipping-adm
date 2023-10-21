@@ -1,8 +1,18 @@
 package com.modela.shipping.adm.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -18,10 +28,8 @@ public class AdmRole {
     @Column(name = "role_id")
     private Long roleId;
 
-    @JsonBackReference("role-organization")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id")
-    private AdmOrganization organization;
+    @Column(name = "organization_id")
+    private Long organization;
 
     @Column(name = "sub_organization_id")
     private Long subOrganizationId;
@@ -35,9 +43,7 @@ public class AdmRole {
     @Column(name = "hourly_fee")
     private Double hourlyFee;
 
-    @OneToMany(mappedBy = "role")
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "role", orphanRemoval = true)
     private List<AdmRolePermission> rolePermissions;
-
-    @OneToMany(mappedBy = "role")
-    private List<AdmUserRole> userRoles;
 }

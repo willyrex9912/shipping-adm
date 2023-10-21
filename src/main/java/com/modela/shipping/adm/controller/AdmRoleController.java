@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @Controller
 @RequestMapping("roles")
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class AdmRoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AdmRole> findById(@PathVariable("id") Long id) throws ShippingException {
-        var oRole = service.findbyId(id);
+        var oRole = service.findById(id);
 
         if (oRole.isEmpty())
             throw new ShippingException("Role not found").withStatus(HttpStatus.NOT_FOUND);
@@ -38,17 +37,13 @@ public class AdmRoleController {
 
     @PostMapping
     public ResponseEntity<AdmRole> save(@RequestBody AdmRole role) throws ShippingException {
-        var created = service.save(role);
-
-        if (created == null)
-            throw new ShippingException("Role not created").withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return ResponseEntity.created(null).body(created);
+        service.save(role);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AdmRole> update(@PathVariable("id") Long id, @RequestBody AdmRole role) throws ShippingException {
-        var oRole = service.findbyId(id);
+        var oRole = service.findById(id);
 
         if (oRole.isEmpty())
             throw new ShippingException("Role not found").withStatus(HttpStatus.NOT_FOUND);
