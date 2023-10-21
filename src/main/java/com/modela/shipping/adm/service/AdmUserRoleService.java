@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.service;
 
+import com.modela.shipping.adm.model.AdmUser;
 import com.modela.shipping.adm.model.AdmUserRole;
 import com.modela.shipping.adm.repository.AdmUserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,10 @@ public class AdmUserRoleService {
     public void saveAll(List<AdmUserRole> userRoles) {
         // TODO: Validar si el userRole ya existe, actualizar solamente cuado trae Id
         repository.saveAll(userRoles);
+    }
+
+    public List<AdmUserRole> findAllByUser(AdmUser user){
+        return repository.findAllByUser(user);
     }
 
     public void deleteAll(Iterable<AdmUserRole> userRoles) {

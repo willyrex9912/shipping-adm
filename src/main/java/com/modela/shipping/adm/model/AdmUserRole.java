@@ -19,12 +19,12 @@ public class AdmUserRole {
     private Long userRoleId;
 
     @JsonBackReference("user-role")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private AdmUser user;
 
     @JsonBackReference("role-user")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private AdmRole role;
 

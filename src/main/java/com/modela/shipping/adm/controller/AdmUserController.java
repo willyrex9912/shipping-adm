@@ -3,11 +3,14 @@ package com.modela.shipping.adm.controller;
 import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmUser;
 import com.modela.shipping.adm.service.AdmUserService;
+import com.modela.shipping.adm.service.AuthService;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +21,12 @@ import java.util.List;
 public class AdmUserController {
 
     private final AdmUserService service;
+    private final AuthService authService;
 
     @GetMapping
-    public ResponseEntity<ShippingPage<List<AdmUser>, Long>> findAll(Pageable pageable) {
+    public ResponseEntity<ShippingPage<List<AdmUser>, Long>> findAll(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
+        // Prueba para obtener datos del usuario autenticado
+        System.out.println(userDetails.getUsername());
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
@@ -36,7 +42,7 @@ public class AdmUserController {
 
     @PostMapping
     public ResponseEntity<AdmUser> save(@RequestBody AdmUser user) throws ShippingException {
-        var created = service.createWithRoles(user);
+        var created = authService.createWithRoles(user);
 
         if (created == null)
             throw new ShippingException("User not created").withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -52,7 +58,7 @@ public class AdmUserController {
             throw new ShippingException("User not found").withStatus(HttpStatus.NOT_FOUND);
 
         user.setUserId(id);
-        var updated = service.createWithRoles(user);
+        var updated = authService.createWithRoles(user);
 
         if (updated == null)
             throw new ShippingException("User not updated").withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
