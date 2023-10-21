@@ -16,7 +16,7 @@ public class AdmPermissionService {
     private final AdmPermissionRepository repository;
 
     public ShippingPage<List<AdmPermissionDto>, Long> findAll(Pageable pageable) {
-        var permissions = repository.findAll(pageable);
+        var permissions = repository.findByParentPermissionNotNull(pageable);
         var permissionsDto = permissions
                 .stream()
                 .map(AdmPermissionDto::new)
