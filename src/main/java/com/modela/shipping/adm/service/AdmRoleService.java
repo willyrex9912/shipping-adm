@@ -30,7 +30,7 @@ public class AdmRoleService {
     public AdmRole save(AdmRole role) {
         // TODO: set org and subOrg
         role.setOrganization(2500L);
-        role.setSubOrganizationId(25001L);
+        role.setSubOrganizationId(2501L);
         return repository.save(role);
     }
 
