@@ -44,7 +44,7 @@ public class AdmRoleService {
     public AdmRole update(Long roleId, AdmRole role) throws ShippingException {
         var originalRole = this.findById(roleId);
         if (originalRole.isEmpty()) return null;
-        if (originalRole.get().getRoleId().equals(role.getRoleId())) throw new ShippingException("invalid_update");
+        if (!originalRole.get().getRoleId().equals(role.getRoleId())) throw new ShippingException("invalid_update");
 
         return this.save(role);
     }
