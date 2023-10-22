@@ -33,17 +33,7 @@ public class AdmRoleController {
     @GetMapping("/{id}")
     public ResponseEntity<AdmRole> findById(@PathVariable("id") Long roleId) {
         return service.findById(roleId)
-                .map(role -> {
-                    var mapper = new ObjectMapper();
-                    try {
-                        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(role);
-                        log.info("json: {}", json);
-                    } catch (JsonProcessingException e) {
-                        log.error("Error: ", e);
-                    }
-
-                    return new ResponseEntity<>(role, HttpStatus.OK);
-                })
+                .map(role -> new ResponseEntity<>(role, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

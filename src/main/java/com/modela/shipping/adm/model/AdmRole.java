@@ -44,6 +44,6 @@ public class AdmRole {
     private Double hourlyFee;
 
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "role", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "role", orphanRemoval = true)
     private List<AdmRolePermission> rolePermissions;
 }

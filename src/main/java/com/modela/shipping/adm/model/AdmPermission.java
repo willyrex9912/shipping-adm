@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +21,8 @@ public class AdmPermission {
     @Column(name = "permission_id")
     private Long permissionId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_permission_id")
     private AdmPermission parentPermission;
 

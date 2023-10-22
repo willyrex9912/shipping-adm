@@ -1,5 +1,7 @@
 package com.modela.shipping.adm.util;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.modela.shipping.adm.security.JwtAuthFilter;
 import com.modela.shipping.adm.service.AdmUserService;
 import lombok.RequiredArgsConstructor;
@@ -79,5 +81,11 @@ public class ShippingConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public Module hibernateModule() {
+        return new Hibernate5JakartaModule()
+                .enable(Hibernate5JakartaModule.Feature.FORCE_LAZY_LOADING);
     }
 }
