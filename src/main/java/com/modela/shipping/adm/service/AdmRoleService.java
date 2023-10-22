@@ -17,6 +17,7 @@ import java.util.Optional;
 public class AdmRoleService {
 
     private final AdmRoleRepository repository;
+    private final ShippingSecurityContext securityContext;
 
     public ShippingPage<List<AdmRole>, Long> findAll(Pageable pageable) {
         var roles = repository.findAll(pageable);
@@ -28,9 +29,9 @@ public class AdmRoleService {
     }
 
     public AdmRole save(AdmRole role) {
-        // TODO: set org and subOrg
-        role.setOrganization(2500L);
-        role.setSubOrganizationId(2501L);
+        // set orgId and subOrgId
+        role.setOrganization(securityContext.getOrgId());
+        role.setSubOrganizationId(securityContext.getSubOrgId());
         return repository.save(role);
     }
 

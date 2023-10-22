@@ -9,12 +9,18 @@ import java.util.Collection;
 @Getter
 public class AdmUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
+    private final Long userId;
+    private final Long orgId;
+    private final Long subOrgId;
 
     public AdmUserDetails(AdmUser admUser) {
-        username = admUser.getEmail();
-        password = admUser.getPassword();
+        this.username = admUser.getEmail();
+        this.password = admUser.getPassword();
+        this.userId = admUser.getUserId();
+        this.orgId = admUser.getOrganization().getOrganizationId();
+        this.subOrgId = admUser.getSubOrganizationId();
     }
 
     @Override
