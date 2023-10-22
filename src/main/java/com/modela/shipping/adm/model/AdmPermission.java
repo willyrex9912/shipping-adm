@@ -20,7 +20,7 @@ public class AdmPermission {
     @Column(name = "permission_id")
     private Long permissionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_permission_id")
     private AdmPermission parentPermission;
 

@@ -29,7 +29,7 @@ public class AdmRole {
     private Long roleId;
 
     @Column(name = "organization_id")
-    private Long organization;
+    private Long organizationId;
 
     @Column(name = "sub_organization_id")
     private Long subOrganizationId;
@@ -44,6 +44,6 @@ public class AdmRole {
     private Double hourlyFee;
 
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "role", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "role", orphanRemoval = true)
     private List<AdmRolePermission> rolePermissions;
 }

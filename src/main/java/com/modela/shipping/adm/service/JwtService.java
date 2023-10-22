@@ -11,14 +11,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
 
-    private final Long TOKEN_VALID_TIME = 30L;
+    @Value("${adm.token-valid-time}")
+    private Integer tokenValidTime;
 
     @Value("${adm.token-private-key}")
     private String privateKeyName;
@@ -28,10 +34,10 @@ public class JwtService {
         return createToken(claims, user.getEmail());
     }
 
-    private Map<String, Object> buildClaims(AdmUser user, List<AdmUserRole> roles){
+    private Map<String, Object> buildClaims(AdmUser user, List<AdmUserRole> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("org", user.getOrganization().getOrganizationId());
-        claims.put("suborg", user.getSubOrganizationId());
+        claims.put("subOrg", user.getSubOrganizationId());
         claims.put("user", user.getUserId());
         claims.put("roles", roles.stream()
                 .map(AdmUserRole::getRole)
@@ -44,11 +50,11 @@ public class JwtService {
     private String createToken(Map<String, Object> claims, String userName) throws IOException {
         return Jwts.builder()
                 .setClaims(claims)
-                .setId("w"+ UUID.randomUUID().getLeastSignificantBits())
+                .setId("w" + UUID.randomUUID().getLeastSignificantBits())
                 .setSubject(userName)
                 .setAudience("CUNOC")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * TOKEN_VALID_TIME))
+                .setExpiration(Date.from(Instant.now().plus(tokenValidTime, ChronoUnit.DAYS)))
                 .signWith(KeyLoader.loadPrivateKey(privateKeyName))
                 .compact();
     }
