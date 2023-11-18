@@ -11,7 +11,7 @@ CREATE TABLE public.adm_org_route (
 CREATE TABLE public.adm_org_route_step (
     org_route_step_id BIGINT NOT NULL,
     org_route_id BIGINT NOT NULL,
-    step_number_id INTEGER NOT NULL,
+    step_number INTEGER NOT NULL,
     source_organization_id BIGINT NOT NULL,
     target_organization_id BIGINT NOT NULL,
     CONSTRAINT adm_org_route_step_pk PRIMARY KEY (org_route_step_id)
