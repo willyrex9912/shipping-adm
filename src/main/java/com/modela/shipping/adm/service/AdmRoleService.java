@@ -1,8 +1,10 @@
 package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.dto.AdmRoleDto;
+import com.modela.shipping.adm.dto.RolRouteDto;
 import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmRole;
+import com.modela.shipping.adm.repository.AdmRolePermissionRepository;
 import com.modela.shipping.adm.repository.AdmRoleRepository;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class AdmRoleService {
 
     private final AdmRoleRepository repository;
     private final ShippingSecurityContext securityContext;
+    private final AdmRolePermissionRepository rolePermissionRepository;
 
     public ShippingPage<List<AdmRoleDto>, Long> findAll(Pageable pageable) {
         var roles = repository.findAllByOrganizationIdAndSubOrganizationId(securityContext.getOrgId(), securityContext.getSubOrgId(), pageable);
@@ -51,5 +54,9 @@ public class AdmRoleService {
 
     public void delete(AdmRole role) {
         repository.delete(role);
+    }
+
+    public List<RolRouteDto> getRoutes(List<Long> rolIds) {
+        return rolePermissionRepository.findRoutesByRolId(rolIds);
     }
 }

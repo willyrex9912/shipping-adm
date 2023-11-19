@@ -1,8 +1,8 @@
 package com.modela.shipping.adm.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modela.shipping.adm.dto.AdmRoleDto;
+import com.modela.shipping.adm.dto.RequestRolRouteDto;
+import com.modela.shipping.adm.dto.RolRouteDto;
 import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmRole;
 import com.modela.shipping.adm.service.AdmRoleService;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -49,5 +50,10 @@ public class AdmRoleController {
         return updatedRole == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/routes")
+    public ResponseEntity<List<RolRouteDto>> getRoutes(@RequestBody RequestRolRouteDto request) {
+        return new ResponseEntity<>(service.getRoutes(Arrays.stream(request.rolIds()).toList()), HttpStatus.OK);
     }
 }

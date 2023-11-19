@@ -42,7 +42,6 @@ public class JwtService {
         claims.put("roles", roles.stream()
                 .map(AdmUserRole::getRole)
                 .map(AdmRole::getRoleId)
-                .map(String::valueOf)
                 .toList());
         return claims;
     }
