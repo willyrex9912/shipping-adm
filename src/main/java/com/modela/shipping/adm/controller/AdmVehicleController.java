@@ -2,7 +2,7 @@ package com.modela.shipping.adm.controller;
 
 import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmVehicle;
-import com.modela.shipping.adm.service.AdmiVehicleService;
+import com.modela.shipping.adm.service.AdmVehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdmVehicleController {
 
-    private final AdmiVehicleService service;
+    private final AdmVehicleService service;
 
     @GetMapping
     public ResponseEntity<ShippingPage<List<AdmVehicle>, Long>> findAll(Pageable pageable) {

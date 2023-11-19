@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AdmiVehicleService {
+public class AdmVehicleService {
 
     private final AdmVehicleRepository admVehicleRepository;
 
@@ -23,13 +23,7 @@ public class AdmiVehicleService {
     }
 
     public AdmVehicle save(AdmVehicle vehicle) {
-        var created =  admVehicleRepository.save(vehicle);
-
-        if (created == null)
-            throw new ShippingException("Vehicle not created")
-                    .withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return created;
+        return admVehicleRepository.save(vehicle);
     }
 
     public AdmVehicle update(Long id, AdmVehicle vehicle) {
@@ -40,13 +34,7 @@ public class AdmiVehicleService {
                     .withStatus(HttpStatus.NOT_FOUND);
 
         vehicle.setVehicleId(id);
-        var updated = admVehicleRepository.save(vehicle);
-
-        if (updated == null)
-            throw new ShippingException("Vehicle not updated")
-                    .withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return updated;
+        return admVehicleRepository.save(vehicle);
     }
 
     public AdmVehicle findById(Long id) {
