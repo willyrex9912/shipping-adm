@@ -8,4 +8,6 @@ import java.util.List;
 public interface AdmOrgRouteStepRepository extends JpaRepository<AdmOrgRouteStep, Long> {
 
     List<AdmOrgRouteStep> findByTargetOrganizationId(Long targetOrgId);
+
+    List<AdmOrgRouteStep> findBySourceOrganizationId(Long source);
 }
