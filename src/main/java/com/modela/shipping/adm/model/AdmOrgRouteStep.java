@@ -37,4 +37,7 @@ public class AdmOrgRouteStep {
 
     @Column(name = "target_organization_id")
     private Long targetOrganizationId;
+
+    @Column(name = "average_distance")
+    private Double averageDistance;
 }
