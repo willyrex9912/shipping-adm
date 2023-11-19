@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Getter
-public class ShippingException extends Exception {
+public class ShippingException extends RuntimeException {
 
     private HttpStatus status;
     private ShippingExceptionMessage msg;
