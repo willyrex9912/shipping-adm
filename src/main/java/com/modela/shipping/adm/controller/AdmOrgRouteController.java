@@ -34,4 +34,13 @@ public class AdmOrgRouteController {
         routeService.findRoute2(source, target);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/version3")
+    public ResponseEntity<?> findRoutes3(
+            @RequestParam(name = "source") Long source,
+            @RequestParam(name = "target") Long target
+    ) throws ShippingException {
+        routeService.findRoute3(source, target);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

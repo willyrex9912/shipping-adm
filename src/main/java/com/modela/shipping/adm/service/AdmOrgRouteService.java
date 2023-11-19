@@ -1,18 +1,21 @@
 package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.dto.GraphDto;
+import com.modela.shipping.adm.dto.GraphDto2;
 import com.modela.shipping.adm.model.AdmOrgRouteStep;
 import com.modela.shipping.adm.repository.AdmOrgRouteRepository;
 import com.modela.shipping.adm.repository.AdmOrgRouteStepRepository;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.graph.Graph;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,6 +114,50 @@ public class AdmOrgRouteService {
                 });
     }
 
+    public void findRoute3(Long source, Long target) {
+        log.info("building tree");
+        var root = buildTree2(source);
+        log.info("tree built");
+        var list = new ArrayList<List<Long>>();
+        list.add(new ArrayList<>(List.of(source)));
+        log.info("finding path");
+        findPath2(root, target, list);
+        log.info("printing paths");
+        list
+                // .stream()
+                // .filter(tmpList -> tmpList.lastIndexOf(target) == tmpList.size() - 1)
+                .forEach(tmpList -> {
+                    var strPath = String.join(" -> ", tmpList.stream().map(String::valueOf).toList());
+                    log.info("path: {}", strPath);
+                });
+    }
+
+    public GraphDto2 buildTree2(Long sourceOrg) {
+        var root = new GraphDto2(sourceOrg, null);
+        root.setChildren(addNodes(root));
+        return root;
+    }
+
+    private List<GraphDto2> addNodes(GraphDto2 node) {
+        log.info("adding nodes");
+        var nodes = orgRouteStepRepository.findBySourceOrganizationId(node.getSourceOrganizationId())
+                .stream()
+                .filter(step -> !node.contains(step.getTargetOrganizationId()))
+                .map(step -> new GraphDto2(step.getTargetOrganizationId(), node))
+                .toList();
+
+        log.info("before for each");
+        nodes.forEach(tmpNode -> {
+            log.info("in for each");
+            var children = addNodes(tmpNode);
+            tmpNode.setChildren(children);
+            log.info("after one for each");
+        });
+
+        log.info("after for each");
+        return nodes;
+    }
+
     public GraphDto buildTree(Long sourceOrg) {
         var visited = new HashSet<Long>();
         var root = new GraphDto(sourceOrg);
@@ -130,6 +177,20 @@ public class AdmOrgRouteService {
 
         node.setNodes(nodes);
         nodes.forEach(tmpNode -> addNodes(tmpNode, visitedNodes));
+    }
+
+
+    private void findPath2(GraphDto2 node, Long target, List<List<Long>> path) {
+        var index = path.isEmpty() ? 0 : path.size() - 1;
+        for (var child : node.getChildren()) {
+            var current = path.get(index);
+            var newBranch = new ArrayList<>(current);
+            path.add(newBranch);
+            newBranch.add(child.getSourceOrganizationId());
+            if (child.getSourceOrganizationId().equals(target)) continue;
+            findPath2(child, target, path);
+        }
+
     }
 
     private void findPath2(GraphDto node, Long target, List<List<Long>> path) {
