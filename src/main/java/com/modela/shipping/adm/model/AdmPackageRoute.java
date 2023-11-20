@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modela.shipping.adm.util.ShippingConstant;
 import jakarta.persistence.Column;
@@ -16,7 +17,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 @Entity
 @Table(name = "package_route")
@@ -32,8 +32,10 @@ public class AdmPackageRoute {
     @Column(name = "vehicle_id")
     private Long vehicleId;
 
-    @Column(name = "package_id")
-    private Long packageId;
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "package_id")
+    private AdmPackage pkg;
 
     @Column(name = "step_number")
     private Integer stepNumber;
@@ -65,4 +67,13 @@ public class AdmPackageRoute {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_package_route_status")
     private AdmCategory categoryPackageRouteStatus;
+
+    @Override
+    public String toString() {
+        return "AdmPackageRoute{" +
+                "stepNumber=" + stepNumber +
+                ", sourceOrganizationId=" + sourceOrganizationId +
+                ", targetOrganizationId=" + targetOrganizationId +
+                '}';
+    }
 }

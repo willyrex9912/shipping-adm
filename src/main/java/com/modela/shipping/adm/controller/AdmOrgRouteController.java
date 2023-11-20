@@ -1,13 +1,13 @@
 package com.modela.shipping.adm.controller;
 
+import com.modela.shipping.adm.model.AdmOrgRoute;
 import com.modela.shipping.adm.service.AdmOrgRouteService;
-import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,30 +17,10 @@ public class AdmOrgRouteController {
 
     private final AdmOrgRouteService routeService;
 
-    @GetMapping
-    public ResponseEntity<?> findRoutes(
-            @RequestParam(name = "source") Long source,
-            @RequestParam(name = "target") Long target
-    ) throws ShippingException {
-        routeService.findRoute(source, target);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/version2")
-    public ResponseEntity<?> findRoutes2(
-            @RequestParam(name = "source") Long source,
-            @RequestParam(name = "target") Long target
-    ) throws ShippingException {
-        routeService.findRoute2(source, target);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/version3")
-    public ResponseEntity<?> findRoutes3(
-            @RequestParam(name = "source") Long source,
-            @RequestParam(name = "target") Long target
-    ) throws ShippingException {
-        routeService.findRoute3(source, target);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/{orgRouteId}")
+    public ResponseEntity<AdmOrgRoute> findById(@PathVariable("orgRouteId") Long orgRouteId) {
+        return routeService.findById(orgRouteId)
+                .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
