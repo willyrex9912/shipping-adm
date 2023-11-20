@@ -4,6 +4,7 @@ import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmParameter;
 import com.modela.shipping.adm.service.AdmParameterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,8 @@ public class AdmParameterController {
     private final AdmParameterService service;
 
     @GetMapping
-    public ResponseEntity<ShippingPage<List<AdmParameter>, Long>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<ShippingPage<List<AdmParameter>, Long>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(service.getAll(pageable));
     }
 
     @GetMapping("/{id}")
