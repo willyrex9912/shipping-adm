@@ -1,6 +1,7 @@
 package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.dto.ShippingPage;
+import com.modela.shipping.adm.model.AdmOrganization;
 import com.modela.shipping.adm.model.AdmVehicle;
 import com.modela.shipping.adm.repository.AdmVehicleRepository;
 import com.modela.shipping.adm.util.exception.ShippingException;
@@ -16,9 +17,11 @@ import java.util.List;
 public class AdmVehicleService {
 
     private final AdmVehicleRepository admVehicleRepository;
+    private final ShippingSecurityContext securityContext;
 
     public ShippingPage<List<AdmVehicle>, Long> findAll(Pageable pageable){
-        var vehicles = admVehicleRepository.findAll(pageable);
+        var organization = AdmOrganization.builder().organizationId(securityContext.getSubOrgId()).build();
+        var vehicles = admVehicleRepository.findByOrganizationOrOrganizationIsNull(pageable, organization);
         return ShippingPage.of(vehicles.toList(), vehicles.getTotalElements());
     }
 

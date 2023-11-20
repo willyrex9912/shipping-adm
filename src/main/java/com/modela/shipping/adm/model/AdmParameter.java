@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class AdmParameter {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "category_parameter_id")
-    private Long categoryParameterId;
+    @Column(name = "parameter_category_id")
+    private Long parameterCategoryId;
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    private AdmOrganization organization;
 }

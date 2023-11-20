@@ -15,4 +15,12 @@ public interface AdmRolePermissionRepository extends JpaRepository<AdmRolePermis
     boolean existsByRoleAndPermission(AdmRole role, AdmPermission permission);
     @Query(name = "find_routes_by_rol_id", nativeQuery = true)
     List<RolRouteDto> findRoutesByRolId(@Param("rolIds") List<Long> rolId);
+
+    @Query("""
+                SELECT rp FROM AdmUserRole AS ur
+                JOIN AdmRolePermission AS rp ON ur.role.roleId = rp.role.roleId
+                JOIN AdmPermission AS p ON rp.permission.permissionId = p.permissionId
+                WHERE ur.user.userId = :userId AND p.parentPermission.permissionId IS NOT NULL
+             """)
+    List<AdmRolePermission> findMyRolePermissions(@Param("userId") Long userId);
 }

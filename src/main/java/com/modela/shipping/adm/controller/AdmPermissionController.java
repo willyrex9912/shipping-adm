@@ -1,6 +1,7 @@
 package com.modela.shipping.adm.controller;
 
 import com.modela.shipping.adm.dto.AdmPermissionDto;
+import com.modela.shipping.adm.dto.AdmRolePermissionDto;
 import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.service.AdmPermissionService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,10 @@ public class AdmPermissionController {
     @GetMapping
     public ShippingPage<List<AdmPermissionDto>, Long> findAll(Pageable pageable) {
         return service.findAll(pageable);
+    }
+
+    @GetMapping("my-permissions")
+    public List<AdmRolePermissionDto> findMyPermissions() {
+        return service.myPermissions();
     }
 }
