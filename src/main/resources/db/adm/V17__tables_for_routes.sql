@@ -86,11 +86,11 @@ ON UPDATE NO ACTION;
 
 -- categories for package route status
 INSERT INTO public.adm_category (category_id, parent_category_id, internal_id, description) VALUES
-(10520, NULL, 520, 'Package_Route_Status'),
-(10521, 10520, 521, 'PRS_Registered'),
-(10522, 10520, 522, 'PRS_Pending'),
-(10523, 10520, 523, 'PRS_In_Transit'),
-(10524, 10520, 524, 'PRS_Completed');
+(10525, NULL, 525, 'Package_Route_Status'),
+(10526, 10525, 526, 'PRS_Registered'),
+(10527, 10525, 527, 'PRS_Pending'),
+(10528, 10525, 528, 'PRS_In_Transit'),
+(10529, 10525, 529, 'PRS_Completed');
 
 -- sequences
 CREATE SEQUENCE SEQ_ADM_ORG_ROUTE INCREMENT 1 START 5000;

@@ -6,11 +6,11 @@ public enum CategoryEnum {
         STAT_ACTIVE(501L),
         STAT_INACTIVE(502L),
         STAT_DELETED(503L),
-    PACKAGE_ROUTE_STATUS(520L),
-        PRS_REGISTERED(521L),
-        PRS_PENDING(522L),
-        PRS_IN_TRANSIT(523L),
-        PRS_COMPLETED(524L);
+    PACKAGE_ROUTE_STATUS(525L),
+        PRS_REGISTERED(526L),
+        PRS_PENDING(527L),
+        PRS_IN_TRANSIT(528L),
+        PRS_COMPLETED(529L);
 
     CategoryEnum(Long internalId) {
         this.internalId = internalId;
