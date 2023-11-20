@@ -1,6 +1,7 @@
 package com.modela.shipping.adm.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.modela.shipping.adm.util.ShippingConstant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * The persistent class for the adm_package database table.
@@ -68,4 +70,7 @@ public class AdmPackage {
     @Column(name = "package_code")
     private String packageCode;
 
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pkg", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<AdmPackageRoute> packageRoute;
 }
