@@ -1,5 +1,6 @@
 package com.modela.shipping.adm.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class AdmVehicle {
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AdmOrganization organization;
 
     @Column(name = "capacity")
@@ -26,7 +28,13 @@ public class AdmVehicle {
     @Column(name = "avg_cost_per_km")
     private Double avgCostPerKm;
 
-    @Column(name = "category_status_id")
-    private Long categoryStatusId;
+    @Column(name = "avg_speed")
+    private Double avgSpeed;
+
+    @Column(name = "vehicle_category_id")
+    private Long vehicleCategoryId;
+
+    @Column(name = "status_category_id")
+    private Long statusCategoryId;
 
 }
