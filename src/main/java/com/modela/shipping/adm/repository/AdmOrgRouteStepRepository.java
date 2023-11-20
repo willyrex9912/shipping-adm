@@ -10,4 +10,6 @@ public interface AdmOrgRouteStepRepository extends JpaRepository<AdmOrgRouteStep
     List<AdmOrgRouteStep> findByTargetOrganizationId(Long targetOrgId);
 
     List<AdmOrgRouteStep> findBySourceOrganizationId(Long source);
+
+    List<AdmOrgRouteStep> findBySourceOrganizationIdAndTargetOrganizationId(Long source, Long target);
 }

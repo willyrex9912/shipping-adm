@@ -13,6 +13,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "adm_org_route_step")
 @Data
@@ -39,5 +41,14 @@ public class AdmOrgRouteStep {
     private Long targetOrganizationId;
 
     @Column(name = "average_distance")
-    private Double averageDistance;
+    private BigDecimal averageDistance;
+
+    @Column(name = "average_time")
+    private BigDecimal averageTime;
+
+    @Column(name = "average_cost_per_km")
+    private BigDecimal averageCostPerKm;
+
+    @Column(name = "number_of_trips")
+    private Long numberOfTrips;
 }

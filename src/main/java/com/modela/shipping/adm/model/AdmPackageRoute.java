@@ -52,6 +52,9 @@ public class AdmPackageRoute {
     @Column(name = "estimated_cost")
     private BigDecimal estimatedCost;
 
+    @Column(name = "estimated_distance")
+    private BigDecimal estimatedDistance;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ShippingConstant.DATETIME_FORMAT)
     @Column(name = "entry_date")
     private LocalDateTime entryDate;

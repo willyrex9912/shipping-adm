@@ -1,6 +1,7 @@
 package com.modela.shipping.adm.service;
 
 import com.modela.shipping.adm.dto.TreeNodeDto;
+import com.modela.shipping.adm.model.AdmOrgRouteStep;
 import com.modela.shipping.adm.model.AdmPackageRoute;
 import com.modela.shipping.adm.repository.AdmOrgRouteStepRepository;
 import com.modela.shipping.adm.util.CategoryEnum;
@@ -9,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 @Service
@@ -34,6 +37,32 @@ public class AdmPackageRouteService {
                 // TODO: set estimated cost and time here
                 .peek(route -> log.info(route.toString()))
                 .toList();
+    }
+
+    private void setEstimatedDistanceAndTimeAndCost(AdmPackageRoute packageRoute) {
+        // cost per km = (gas cost (Q/L)) * (gas consume (L/100K)) / (100 * vehicle weight(kg))
+
+        var similarRoutes = orgRouteStepRepository.findBySourceOrganizationIdAndTargetOrganizationId(packageRoute.getSourceOrganizationId(), packageRoute.getTargetOrganizationId());
+
+        var totalTrips = similarRoutes
+                .stream()
+                .mapToLong(AdmOrgRouteStep::getNumberOfTrips)
+                .sum();
+
+        var totalDistance = getTotalByFunction(similarRoutes, AdmOrgRouteStep::getAverageDistance);
+        var totalTime = getTotalByFunction(similarRoutes, AdmOrgRouteStep::getAverageTime);
+        var totalAvgCost = getTotalByFunction(similarRoutes, AdmOrgRouteStep::getAverageCostPerKm);
+
+        packageRoute.setEstimatedDistance(totalDistance.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP));
+        packageRoute.setEstimatedTime(totalTime.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP));
+    }
+
+    private BigDecimal getTotalByFunction(List<AdmOrgRouteStep> steps, Function<AdmOrgRouteStep, BigDecimal> transformer) {
+        return steps
+                .stream()
+                .map(transformer)
+                .reduce(BigDecimal::add)
+                .orElse(new BigDecimal(1));
     }
 
     private TreeNodeDto buildTree(Long source) {
@@ -77,6 +106,7 @@ public class AdmPackageRouteService {
                     packageRoute.setCategoryPackageRouteStatus(prsPending);
                     packageRoute.setEstimatedCost(new BigDecimal(0));
                     packageRoute.setEstimatedTime(new BigDecimal(0));
+                    packageRoute.setEstimatedDistance(new BigDecimal(0));
                     routes.add(packageRoute);
                 });
 
