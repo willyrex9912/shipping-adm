@@ -11,15 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "adm_role")
-@Getter
-@Setter
+@Getter @Setter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdmRole {
 
     @Id

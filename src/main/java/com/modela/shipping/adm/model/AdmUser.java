@@ -1,18 +1,18 @@
 package com.modela.shipping.adm.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.modela.shipping.adm.dto.RolUserDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "adm_user")
-@Getter
-@Setter
-public class
-AdmUser {
+@Getter @Setter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class AdmUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userIdGenerator")
@@ -20,13 +20,13 @@ AdmUser {
     @Column(name = "user_id")
     private Long userId;
 
-    @JsonBackReference("user-organization")
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private AdmOrganization organization;
 
-    @Column(name = "sub_organization_id")
-    private Long subOrganizationId;
+    @ManyToOne
+    @JoinColumn(name = "sub_organization_id", nullable = true)
+    private AdmOrganization subOrganization;
 
     @Column(name = "full_name")
     private String fullName;
@@ -44,5 +44,10 @@ AdmUser {
     private String cui;
 
     @OneToMany(mappedBy = "user")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<AdmUserRole> userRoles;
+
+    @Transient
+    @JsonProperty(value = "roles")
+    private List<RolUserDto> roles;
 }

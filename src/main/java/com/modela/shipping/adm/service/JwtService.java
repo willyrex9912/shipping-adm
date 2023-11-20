@@ -13,11 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -37,7 +33,7 @@ public class JwtService {
     private Map<String, Object> buildClaims(AdmUser user, List<AdmUserRole> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("org", user.getOrganization().getOrganizationId());
-        claims.put("subOrg", user.getSubOrganizationId());
+        claims.put("subOrg", Objects.isNull(user.getSubOrganization()) ? 0 : user.getSubOrganization().getOrganizationId());
         claims.put("user", user.getUserId());
         claims.put("roles", roles.stream()
                 .map(AdmUserRole::getRole)

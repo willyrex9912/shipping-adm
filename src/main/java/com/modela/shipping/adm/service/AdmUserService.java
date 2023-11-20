@@ -4,9 +4,12 @@ import com.modela.shipping.adm.dto.ShippingPage;
 import com.modela.shipping.adm.model.AdmUser;
 import com.modela.shipping.adm.model.AdmUserDetails;
 import com.modela.shipping.adm.repository.AdmUserRepository;
+import com.modela.shipping.adm.repository.AdmUserRoleRepository;
+import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,14 +23,28 @@ import java.util.Optional;
 public class AdmUserService {
 
     private final AdmUserRepository repository;
+    private final AdmUserRoleRepository admUserRoleRepository;
 
     public ShippingPage<List<AdmUser>, Long> findAll(Pageable pageable){
         var page = repository.findAll(pageable);
         return ShippingPage.of(page.toList(), page.getTotalElements());
     }
 
-    public Optional<AdmUser> findById(Long id) {
-        return repository.findById(id);
+    public List<AdmUser> findAllWithRoles(){
+        var users = repository.findAll().stream().peek(user -> {
+            user.setRoles(admUserRoleRepository
+                    .findRolesByUserId(user.getUserId()));
+        }).toList();
+        return users;
+    }
+
+    public AdmUser findById(Long id) {
+        var oUser = repository.findById(id);
+        if (oUser.isEmpty())
+            throw new ShippingException("User not found")
+                    .withStatus(HttpStatus.NOT_FOUND);
+
+        return oUser.get();
     }
 
     public Optional<AdmUser> findByEmail(String email){

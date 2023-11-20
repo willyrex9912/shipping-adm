@@ -2,14 +2,15 @@ package com.modela.shipping.adm.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "adm_user_role")
-@Getter @Setter
+@Getter @Setter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdmUserRole {
 
     @Id

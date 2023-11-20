@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -49,6 +50,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public AdmUser createWithRoles(AdmUser user) throws ShippingException {
         var userOpt = admUserRepository.findByEmail(user.getEmail());
         if (Objects.isNull(user.getUserId()) && userOpt.isPresent()) {
@@ -57,8 +59,9 @@ public class AuthService {
         }
 
         user.setPassword(encoder.encode(user.getPassword()));
-        userRoleService.saveAll(user.getUserRoles());
-        return admUserRepository.save(user);
+        var userCreated = admUserRepository.save(user);
+        userRoleService.saveAll(user.getUserId(), user.getRoles());
+        return userCreated;
     }
 
     public Boolean checkPassword(String password, String encodedPassword){

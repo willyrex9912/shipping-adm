@@ -7,7 +7,6 @@ import com.modela.shipping.adm.service.AuthService;
 import com.modela.shipping.adm.util.exception.ShippingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,38 +29,27 @@ public class AdmUserController {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<AdmUser>> findAllWithRoles() {
+        return ResponseEntity.ok(service.findAllWithRoles());
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<AdmUser> findById(@PathVariable("id") Long id) throws ShippingException {
-        var oUser = service.findById(id);
-
-        if (oUser.isEmpty())
-            throw new ShippingException("User not found").withStatus(HttpStatus.NOT_FOUND);
-
-        return ResponseEntity.ok(oUser.get());
+    public ResponseEntity<AdmUser> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<AdmUser> save(@RequestBody AdmUser user) throws ShippingException {
-        var created = authService.createWithRoles(user);
-
-        if (created == null)
-            throw new ShippingException("User not created").withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return ResponseEntity.created(null).body(created);
+    public ResponseEntity<AdmUser> save(@RequestBody AdmUser user) {
+        return ResponseEntity.created(null).body(authService.createWithRoles(user));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AdmUser> update(@PathVariable("id") Long id, @RequestBody AdmUser user) throws ShippingException {
-        var oUser = service.findById(id);
-
-        if (oUser.isEmpty())
-            throw new ShippingException("User not found").withStatus(HttpStatus.NOT_FOUND);
+        var userDB = service.findById(id);
 
         user.setUserId(id);
         var updated = authService.createWithRoles(user);
-
-        if (updated == null)
-            throw new ShippingException("User not updated").withStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 
         return ResponseEntity.ok(updated);
     }

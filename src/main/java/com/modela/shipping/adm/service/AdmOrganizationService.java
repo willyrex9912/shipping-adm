@@ -29,4 +29,9 @@ public class AdmOrganizationService {
         return repository.findById(id);
     }
 
+    public ShippingPage<List<AdmOrganization>, Long> findAllOrgsByParentId(Pageable pageable, Long organizationId){
+        var organizations = repository.findAllByParentOrganizationId(organizationId, pageable);
+        return ShippingPage.of(organizations.toList(), organizations.getTotalElements());
+    }
+
 }

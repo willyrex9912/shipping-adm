@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Getter
 public class AdmUserDetails implements UserDetails {
@@ -20,7 +21,7 @@ public class AdmUserDetails implements UserDetails {
         this.password = admUser.getPassword();
         this.userId = admUser.getUserId();
         this.orgId = admUser.getOrganization().getOrganizationId();
-        this.subOrgId = admUser.getSubOrganizationId();
+        this.subOrgId = Objects.isNull(admUser.getSubOrganization()) ? 0 : admUser.getSubOrganization().getOrganizationId();
     }
 
     @Override

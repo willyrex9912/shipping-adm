@@ -60,5 +60,9 @@ public class AdmOrganizationController {
         return ResponseEntity.ok(updated);
     }
 
+    @GetMapping("/organizationsByParent/{organizationId}")
+    public ResponseEntity<ShippingPage<List<AdmOrganization>, Long>> findAllSubOrganizations(Pageable pageable, @PathVariable Long organizationId) {
+        return ResponseEntity.ok(service.findAllOrgsByParentId(pageable, organizationId));
+    }
 
 }

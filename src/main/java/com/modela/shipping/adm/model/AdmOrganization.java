@@ -26,7 +26,4 @@ public class AdmOrganization {
 
     @Column(name = "org_description")
     private String orgDescription;
-
-    @OneToMany(mappedBy = "organization")
-    private List<AdmUser> users;
 }
