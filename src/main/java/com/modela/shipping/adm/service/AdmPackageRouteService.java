@@ -4,6 +4,7 @@ import com.modela.shipping.adm.dto.TreeNodeDto;
 import com.modela.shipping.adm.model.AdmOrgRouteStep;
 import com.modela.shipping.adm.model.AdmPackageRoute;
 import com.modela.shipping.adm.repository.AdmOrgRouteStepRepository;
+import com.modela.shipping.adm.repository.AdmVehicleTypeRepository;
 import com.modela.shipping.adm.util.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,26 +24,69 @@ public class AdmPackageRouteService {
 
     private final AdmOrgRouteStepRepository orgRouteStepRepository;
     private final AdmCategoryService categoryService;
+    private final AdmParameterService parameterService;
+    private final AdmVehicleTypeRepository vehicleTypeRepository;
 
-    public List<List<AdmPackageRoute>> findRoutes(Long source, Long target) {
+    public List<AdmPackageRoute> findRoutes(Long source, Long target, BigDecimal packageWeight) {
         var root = buildTree(source);
         var paths = new ArrayList<List<Long>>();
         paths.add(new ArrayList<>(List.of(source)));
         findPath(root, target, paths);
 
-        return paths
+        var routes = paths
                 .stream()
                 .filter(path -> path.lastIndexOf(target) == path.size() - 1)
                 .map(this::createPackageRoute)
                 // TODO: set estimated cost and time here
                 .peek(route -> log.info(route.toString()))
                 .toList();
+
+        var bestRoute = new ArrayList<AdmPackageRoute>();
+        routes.forEach(route -> route.forEach(subRoute -> this.setEstimatedDistanceAndTimeAndCost(subRoute, packageWeight)));
+
+        BigDecimal currentValue = BigDecimal.valueOf(Double.MAX_VALUE);
+        for (var route: routes) {
+            BigDecimal tmpValue = getResultByFunction(route, AdmPackageRoute::getEstimatedTime);
+            if (tmpValue.compareTo(currentValue) < 0) {
+                currentValue = tmpValue;
+                bestRoute.clear();
+                bestRoute.addAll(route);
+            } else {
+                // TODO: print discard route here
+                printDiscardRoute(route, tmpValue);
+            }
+        }
+
+        if (currentValue.compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) != 0) log.info("best value {}", currentValue);
+        return bestRoute;
     }
 
-    private void setEstimatedDistanceAndTimeAndCost(AdmPackageRoute packageRoute) {
-        // cost per km = (gas cost (Q/L)) * (gas consume (L/100K)) / (100 * vehicle weight(kg))
+    private void printDiscardRoute(List<AdmPackageRoute> route, BigDecimal value) {
+        var tmpStrRoute = route
+                .stream()
+                .map(AdmPackageRoute::getSourceOrganizationId)
+                .map(String::valueOf)
+                .toList();
 
+        var strRoutes = new ArrayList<>(tmpStrRoute);
+        strRoutes.add(String.valueOf(route.get(route.size() - 1).getTargetOrganizationId()));
+        log.warn("discard route: {}, value: {}", String.join(" -> ", strRoutes), value);
+    }
+
+    private BigDecimal getResultByFunction(List<AdmPackageRoute> steps, Function<AdmPackageRoute, BigDecimal> transformer) {
+        return steps
+                .stream()
+                .map(transformer)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.valueOf(Long.MAX_VALUE));
+    }
+
+    private void setEstimatedDistanceAndTimeAndCost(AdmPackageRoute packageRoute, BigDecimal packageWeight) {
+        // sent cost = (package_weight * weight_fee) + (distance * distance_fee) + (average_time_in_source * cost_of_storage)
         var similarRoutes = orgRouteStepRepository.findBySourceOrganizationIdAndTargetOrganizationId(packageRoute.getSourceOrganizationId(), packageRoute.getTargetOrganizationId());
+
+        // TODO: find type of vehicle most used in the source here
+        var vehicleType = vehicleTypeRepository.findByVehicleCategory_internalId(CategoryEnum.VC_MEDIUM.internalId);
 
         var totalTrips = similarRoutes
                 .stream()
@@ -53,8 +97,17 @@ public class AdmPackageRouteService {
         var totalTime = getTotalByFunction(similarRoutes, AdmOrgRouteStep::getAverageTime);
         var totalAvgCost = getTotalByFunction(similarRoutes, AdmOrgRouteStep::getAverageCostPerKm);
 
-        packageRoute.setEstimatedDistance(totalDistance.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP));
-        packageRoute.setEstimatedTime(totalTime.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP));
+        var estimatedDistance = totalDistance.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP);
+        var estimatedTime = totalTime.divide(new BigDecimal(totalTrips), 2, RoundingMode.HALF_UP);
+
+        var weightTotalFee = packageWeight.multiply(vehicleType.getWeightFee());
+        var distanceTotalFee = packageWeight.multiply(vehicleType.getDistanceFee());
+
+        var estimatedCost = weightTotalFee.add(distanceTotalFee);
+
+        packageRoute.setEstimatedDistance(estimatedDistance);
+        packageRoute.setEstimatedTime(estimatedTime);
+        packageRoute.setEstimatedCost(estimatedCost);
     }
 
     private BigDecimal getTotalByFunction(List<AdmOrgRouteStep> steps, Function<AdmOrgRouteStep, BigDecimal> transformer) {

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("package-routes")
 @RequiredArgsConstructor
@@ -19,9 +21,10 @@ public class AdmPackageRouteController {
     @GetMapping
     public ResponseEntity<?> findRoutes(
             @RequestParam(name = "source") Long source,
-            @RequestParam(name = "target") Long target
-    ) {
-        var routes = packageRouteService.findRoutes(source, target);
+            @RequestParam(name = "target") Long target,
+            @RequestParam(name = "weight")BigDecimal packageWeight
+            ) {
+        var routes = packageRouteService.findRoutes(source, target, packageWeight);
         return new ResponseEntity<>(routes, HttpStatus.OK);
     }
 }

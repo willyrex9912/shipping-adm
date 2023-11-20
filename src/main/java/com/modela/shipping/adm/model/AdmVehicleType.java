@@ -3,6 +3,8 @@ package com.modela.shipping.adm.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "adm_vehicle_type")
 @Getter @Setter @ToString @Builder
@@ -20,10 +22,10 @@ public class AdmVehicleType {
     private String description;
 
     @Column(name = "weight_fee")
-    private Double weightFee;
+    private BigDecimal weightFee;
 
     @Column(name = "distance_fee")
-    private Double distanceFee;
+    private BigDecimal distanceFee;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_category_id")
