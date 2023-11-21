@@ -53,15 +53,15 @@ public class AdmPackageRouteService {
                 bestRoute.addAll(route);
             } else {
                 // TODO: print discard route here
-                printDiscardRoute(route, tmpValue);
+                printDiscardRoute("discard route: {}, value: {}", route, tmpValue);
             }
         }
 
-        if (currentValue.compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) != 0) log.info("best value {}", currentValue);
+        if (currentValue.compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) != 0) printDiscardRoute("best route: {}, value: {}", bestRoute, currentValue);
         return bestRoute;
     }
 
-    private void printDiscardRoute(List<AdmPackageRoute> route, BigDecimal value) {
+    private void printDiscardRoute(String message, List<AdmPackageRoute> route, BigDecimal value) {
         var tmpStrRoute = route
                 .stream()
                 .map(AdmPackageRoute::getSourceOrganizationId)
@@ -70,7 +70,7 @@ public class AdmPackageRouteService {
 
         var strRoutes = new ArrayList<>(tmpStrRoute);
         strRoutes.add(String.valueOf(route.get(route.size() - 1).getTargetOrganizationId()));
-        log.warn("discard route: {}, value: {}", String.join(" -> ", strRoutes), value);
+        log.warn(message, String.join(" -> ", strRoutes), value);
     }
 
     private BigDecimal getResultByFunction(List<AdmPackageRoute> steps, Function<AdmPackageRoute, BigDecimal> transformer) {
