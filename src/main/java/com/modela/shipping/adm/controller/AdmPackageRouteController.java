@@ -22,9 +22,10 @@ public class AdmPackageRouteController {
     public ResponseEntity<?> findRoutes(
             @RequestParam(name = "source") Long source,
             @RequestParam(name = "target") Long target,
-            @RequestParam(name = "weight")BigDecimal packageWeight
+            @RequestParam(name = "weight")BigDecimal packageWeight,
+            @RequestParam(name = "type") Long type
             ) {
-        var routes = packageRouteService.findRoutes(source, target, packageWeight);
+        var routes = packageRouteService.findRoutes(source, target, packageWeight, type);
         return new ResponseEntity<>(routes, HttpStatus.OK);
     }
 }

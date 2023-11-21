@@ -27,7 +27,7 @@ public class AdmPackageRouteService {
     private final AdmParameterService parameterService;
     private final AdmVehicleTypeRepository vehicleTypeRepository;
 
-    public List<AdmPackageRoute> findRoutes(Long source, Long target, BigDecimal packageWeight) {
+    public List<AdmPackageRoute> findRoutes(Long source, Long target, BigDecimal packageWeight, Long type) {
         var root = buildTree(source);
         var paths = new ArrayList<List<Long>>();
         paths.add(new ArrayList<>(List.of(source)));
@@ -44,9 +44,14 @@ public class AdmPackageRouteService {
         var bestRoute = new ArrayList<AdmPackageRoute>();
         routes.forEach(route -> route.forEach(subRoute -> this.setEstimatedDistanceAndTimeAndCost(subRoute, packageWeight)));
 
+        Function<AdmPackageRoute, BigDecimal> transformer = AdmPackageRoute::getEstimatedTime;
+        if (type == 1L) transformer = AdmPackageRoute::getEstimatedDistance;
+        if (type == 2L) transformer = AdmPackageRoute::getEstimatedCost;
+        if (type == 3L) transformer = AdmPackageRoute::getEstimatedTime;
+
         BigDecimal currentValue = BigDecimal.valueOf(Double.MAX_VALUE);
         for (var route: routes) {
-            BigDecimal tmpValue = getResultByFunction(route, AdmPackageRoute::getEstimatedTime);
+            BigDecimal tmpValue = getResultByFunction(route, transformer);
             if (tmpValue.compareTo(currentValue) < 0) {
                 currentValue = tmpValue;
                 bestRoute.clear();
